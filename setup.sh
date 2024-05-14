@@ -46,11 +46,50 @@ install_docker() {
     esac
 }
 
+install_and_setup_suricata() {
+    DISTRO=$(detect_distro)
+    case "$DISTRO" in
+        "ubuntu" | "debian")
+            sudo apt-get update
+            sudo add-apt-repository ppa:oisf/suricata-stable
+            sudo apt-get install -y suricata
+            sudo systemctl enable suricata
+            sudo cp suricata/suricata.yaml /etc/suricata/suricata.yaml
+            sudo suricata -T -c /etc/suricata/suricata.yaml -v
+            ;;
+        "centos" | "rhel")
+            sudo yum install -y epel-release
+            sudo yum install -y suricata
+            sudo systemctl enable suricata
+            sudo cp suricata/suricata.yaml /etc/suricata/suricata.yaml
+            sudo suricata -T -c /etc/suricata/suricata.yaml -v
+            ;;
+        "fedora")
+            sudo dnf install -y suricata
+            sudo systemctl enable suricata
+            sudo cp suricata/suricata.yaml /etc/suricata/suricata.yaml
+            sudo suricata -T -c /etc/suricata/suricata.yaml -v
+            ;;
+        *)
+            echo "Unsupported distribution: $DISTRO"
+            exit 1
+            ;;
+    esac
+}
+
+start_project() {
+    docker compose up setup
+    docker compose up -d
+}
+
 main() {
     install_docker
     sudo systemctl enable docker
     sudo systemctl start docker
     docker --version
+    sudo usermod -aG docker $USER
+    install_and_setup_suricata
+    start_project
 }
 
 main
