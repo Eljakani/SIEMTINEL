@@ -1,0 +1,21 @@
+---
+## Default Logstash configuration from Logstash base image.
+## https://github.com/elastic/logstash/blob/main/docker/data/logstash/config/logstash-full.yml
+#
+http.host: 0.0.0.0
+
+node.name: logstash
+
+input:
+  http_poller:
+    urls:
+      test1: "http://localhost:9650"
+    request_timeout: 60
+    schedule:
+      cron: "* * * * * UTC"
+    codec: "json"
+    metadata_target: "http_poller_metadata"
+
+output:
+  stdout:
+    codec: rubydebug
