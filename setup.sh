@@ -135,6 +135,7 @@ main() {
                 start_project
                 ;;
             2)
+                install_suricata
                 install_latest_filebeat
                 interactive_setup_filebeat
                 ;;
