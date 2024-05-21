@@ -30,9 +30,10 @@ install_suricata() {
     sudo sed -i 's/# community-id: true/community-id: true/g' /etc/suricata/suricata.yaml
     # find the line pcap: and under it, set the value of the variable interface to the device name for your system
     sudo sed -i 's/# pcap:/pcap:/g' /etc/suricata/suricata.yaml
-    sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yaml
+    sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yamls
     # #use-mmap: yes
     sudo sed -i 's/# use-mmap: yes/use-mmap: yes/g' /etc/suricata/suricata.yaml
+    # enable capture-settings
     sudo suricata-update
     sudo suricata-update list-sources
     sudo suricata-update enable-source tgreen/hunting
@@ -108,6 +109,9 @@ interactive_setup_filebeat() {
     sudo sed -i "s/CONTROLLER_USERNAME/$CONTROLLER_USERNAME/g" /etc/filebeat/filebeat.yml
     # replace CONTROLLER_PASSWORD in filebeat/filebeat.yml with the actual password
     sudo sed -i "s/CONTROLLER_PASSWORD/$CONTROLLER_PASSWORD/g" /etc/filebeat/filebeat.yml
+    # add /var/log/suricata/eve.json to the paths in filebeat/filebeat.yml
+    sudo sed -i 's/# paths:/paths:/g' /etc/filebeat/filebeat.yml
+    sudo sed -i 's/#   - \/var\/log\/*.log/   - \/var\/log\/suricata\/eve.json/g' /etc/filebeat/filebeat.yml
     # enable and start the filebeat service
     sudo systemctl enable filebeat
     # enable the suricata module
@@ -115,7 +119,7 @@ interactive_setup_filebeat() {
     # setup the suricata module
     sudo filebeat setup
     # start the filebeat service
-    sudo systemctl start filebeat.service
+    sudo systemctl start filebeat
 
 }
 
