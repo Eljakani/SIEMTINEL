@@ -46,36 +46,6 @@ install_docker() {
     esac
 }
 
-install_and_setup_suricata() {
-    DISTRO=$(detect_distro)
-    case "$DISTRO" in
-        "ubuntu" | "debian")
-            sudo apt-get update
-            sudo add-apt-repository ppa:oisf/suricata-stable
-            sudo apt-get install -y suricata
-            sudo systemctl enable suricata
-            sudo cp suricata/suricata.yaml /etc/suricata/suricata.yaml
-            sudo suricata -T -c /etc/suricata/suricata.yaml -v
-            ;;
-        "centos" | "rhel")
-            sudo yum install -y epel-release
-            sudo yum install -y suricata
-            sudo systemctl enable suricata
-            sudo cp suricata/suricata.yaml /etc/suricata/suricata.yaml
-            sudo suricata -T -c /etc/suricata/suricata.yaml -v
-            ;;
-        "fedora")
-            sudo dnf install -y suricata
-            sudo systemctl enable suricata
-            sudo cp suricata/suricata.yaml /etc/suricata/suricata.yaml
-            sudo suricata -T -c /etc/suricata/suricata.yaml -v
-            ;;
-        *)
-            echo "Unsupported distribution: $DISTRO"
-            exit 1
-            ;;
-    esac
-}
 install_latest_filebeat() {
     # get the version of filebeat from .env file 
     DISTRO=$(detect_distro)
@@ -104,20 +74,16 @@ interactive_setup_filebeat() {
     # ask for the ip address of the controller
     read -p "Enter the IP address of the controller: " CONTROLLER_IP
     # replace CONTROLLER_IP in filebeat/filebeat.yml with the actual IP address
-    sed  "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
+    sudo sed  "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
     # enable and start the filebeat service
     sudo systemctl enable filebeat
-<<<<<<< HEAD
     # enable the suricata module
     sudo filebeat modules enable suricata
     # setup the suricata module
     sudo filebeat setup
     # start the filebeat service
-    sudo systemctl start filebeat
+    sudo systemctl start filebeat.service
 
-=======
-    sudo systemctl start filebeat
->>>>>>> 64241f4 (finalee)
 }
 
 start_project() {
@@ -138,7 +104,6 @@ main() {
                 start_project
                 ;;
             2)
-                install_and_setup_suricata
                 install_latest_filebeat
                 interactive_setup_filebeat
                 ;;
