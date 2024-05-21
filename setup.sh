@@ -107,6 +107,7 @@ interactive_setup_filebeat() {
     sed  "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
     # enable and start the filebeat service
     sudo systemctl enable filebeat
+<<<<<<< HEAD
     # enable the suricata module
     sudo filebeat modules enable suricata
     # setup the suricata module
@@ -114,6 +115,9 @@ interactive_setup_filebeat() {
     # start the filebeat service
     sudo systemctl start filebeat
 
+=======
+    sudo systemctl start filebeat
+>>>>>>> 64241f4 (finalee)
 }
 
 start_project() {
