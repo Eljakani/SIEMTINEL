@@ -31,6 +31,8 @@ install_suricata() {
     # find the line pcap: and under it, set the value of the variable interface to the device name for your system
     sudo sed -i 's/# pcap:/pcap:/g' /etc/suricata/suricata.yaml
     sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yaml
+    # #use-mmap: yes
+    sudo sed -i 's/# use-mmap: yes/use-mmap: yes/g' /etc/suricata/suricata.yaml
     sudo suricata-update
     sudo suricata-update list-sources
     sudo suricata-update enable-source tgreen/hunting
