@@ -28,7 +28,7 @@ install_docker() {
             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
             sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
             sudo apt-get update
-            sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
             ;;
         "centos" | "rhel")
             sudo yum install -y yum-utils
@@ -73,8 +73,15 @@ install_latest_filebeat() {
 interactive_setup_filebeat() {
     # ask for the ip address of the controller
     read -p "Enter the IP address of the controller: " CONTROLLER_IP
+    # ask for the username of the controller and the password
+    read -p "Enter the username of the controller: " CONTROLLER_USERNAME
+    read -p "Enter the password of the controller: " CONTROLLER_PASSWORD
     # replace CONTROLLER_IP in filebeat/filebeat.yml with the actual IP address
-    sudo sed  "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
+    sudo sed "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
+    # replace CONTROLLER_USERNAME in filebeat/filebeat.yml with the actual username
+    sudo sed -i "s/CONTROLLER_USERNAME/$CONTROLLER_USERNAME/g" /etc/filebeat/filebeat.yml
+    # replace CONTROLLER_PASSWORD in filebeat/filebeat.yml with the actual password
+    sudo sed -i "s/CONTROLLER_PASSWORD/$CONTROLLER_PASSWORD/g" /etc/filebeat/filebeat.yml
     # enable and start the filebeat service
     sudo systemctl enable filebeat
     # enable the suricata module
@@ -87,8 +94,8 @@ interactive_setup_filebeat() {
 }
 
 start_project() {
-    docker compose up setup
-    docker compose up -d
+    sudo docker compose up setup
+    sudo docker compose up -d
 }
 
 main() {
