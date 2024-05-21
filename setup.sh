@@ -76,6 +76,45 @@ install_and_setup_suricata() {
             ;;
     esac
 }
+install_latest_filebeat() {
+    # get the version of filebeat from .env file 
+    DISTRO=$(detect_distro)
+    VERSION=$(grep ELASTIC_VERSION .env | cut -d '=' -f2)
+    case "$DISTRO" in
+        "ubuntu" | "debian")
+            curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-$VERSION-amd64.deb
+            sudo dpkg -i filebeat-$VERSION-amd64.deb
+            ;;
+        "centos" | "rhel")
+            curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-$VERSION-x86_64.rpm
+            sudo rpm -vi filebeat-$VERSION-x86_64.rpm
+            ;;
+        "fedora")
+            curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-$VERSION-x86_64.rpm
+            sudo rpm -vi filebeat-$VERSION-x86_64.rpm
+            ;;
+        *)
+            echo "Unsupported distribution: $DISTRO"
+            exit 1
+            ;;
+    esac
+}
+
+interactive_setup_filebeat() {
+    # ask for the ip address of the controller
+    read -p "Enter the IP address of the controller: " CONTROLLER_IP
+    # replace CONTROLLER_IP in filebeat/filebeat.yml with the actual IP address
+    sed  "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
+    # enable and start the filebeat service
+    sudo systemctl enable filebeat
+    # enable the suricata module
+    sudo filebeat modules enable suricata
+    # setup the suricata module
+    sudo filebeat setup
+    # start the filebeat service
+    sudo systemctl start filebeat
+
+}
 
 start_project() {
     docker compose up setup
@@ -83,13 +122,27 @@ start_project() {
 }
 
 main() {
-    install_docker
-    sudo systemctl enable docker
-    sudo systemctl start docker
-    docker --version
-    sudo usermod -aG docker $USER
-    install_and_setup_suricata
-    start_project
+    choice=""
+    while [[ "$choice" != "1" && "$choice" != "2" ]]; do
+        echo "[+] Is this machine a controller or a sensor?"
+        echo "1. Controller"
+        echo "2. Sensor"
+        read -p "Enter your choice: " choice
+        case $choice in
+            1)
+                install_docker
+                start_project
+                ;;
+            2)
+                install_and_setup_suricata
+                install_latest_filebeat
+                interactive_setup_filebeat
+                ;;
+            *)
+                echo "Invalid choice"
+                ;;
+        esac
+    done
 }
 
 main
