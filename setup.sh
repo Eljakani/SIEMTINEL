@@ -77,7 +77,9 @@ interactive_setup_filebeat() {
     read -p "Enter the username of the controller: " CONTROLLER_USERNAME
     read -p "Enter the password of the controller: " CONTROLLER_PASSWORD
     # replace CONTROLLER_IP in filebeat/filebeat.yml with the actual IP address
-    sudo sed "s/CONTROLLER_IP/$CONTROLLER_IP/g" filebeat/filebeat.yml > /etc/filebeat/filebeat.yml
+    sudo cp filebeat/filebeat.yml /etc/filebeat/filebeat.yml
+    
+    sudo sed -i "s/CONTROLLER_IP/$CONTROLLER_IP/g" /etc/filebeat/filebeat.yml
     # replace CONTROLLER_USERNAME in filebeat/filebeat.yml with the actual username
     sudo sed -i "s/CONTROLLER_USERNAME/$CONTROLLER_USERNAME/g" /etc/filebeat/filebeat.yml
     # replace CONTROLLER_PASSWORD in filebeat/filebeat.yml with the actual password
