@@ -17,6 +17,28 @@ detect_distro() {
     fi
     echo $DISTRO
 }
+# Function to install suricata and copy the suricata.yml file
+install_suricata() {
+    DISTRO=$(detect_distro)
+    sudo apt install wget curl nano software-properties-common dirmngr apt-transport-https gnupg gnupg2 ca-certificates lsb-release ubuntu-keyring unzip -y
+    sudo add-apt-repository ppa:oisf/suricata-stable -y
+    sudo apt-get update
+    sudo apt-get install suricata -y
+    sudo systemctl enable suricata
+    sudo systemctl stop suricata
+    # community-id: true in /etc/suricata/suricata.yaml
+    sudo sed -i 's/# community-id: true/community-id: true/g' /etc/suricata/suricata.yaml
+    # find the line pcap: and under it, set the value of the variable interface to the device name for your system
+    sudo sed -i 's/# pcap:/pcap:/g' /etc/suricata/suricata.yaml
+    sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yaml
+    sudo suricata-update
+    sudo suricata-update list-sources
+    sudo suricata-update enable-source tgreen/hunting
+    sudo suricata -T -c /etc/suricata/suricata.yaml -v
+    sudo systemctl start suricata
+}
+
+
 
 # Function to install Docker
 install_docker() {
@@ -78,7 +100,7 @@ interactive_setup_filebeat() {
     read -p "Enter the password of the controller: " CONTROLLER_PASSWORD
     # replace CONTROLLER_IP in filebeat/filebeat.yml with the actual IP address
     sudo cp filebeat/filebeat.yml /etc/filebeat/filebeat.yml
-    
+
     sudo sed -i "s/CONTROLLER_IP/$CONTROLLER_IP/g" /etc/filebeat/filebeat.yml
     # replace CONTROLLER_USERNAME in filebeat/filebeat.yml with the actual username
     sudo sed -i "s/CONTROLLER_USERNAME/$CONTROLLER_USERNAME/g" /etc/filebeat/filebeat.yml
