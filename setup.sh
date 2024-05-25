@@ -42,6 +42,13 @@ install_suricata() {
     sudo systemctl start suricata
 }
 
+suricata_network_setup(){
+    # interface configuration
+    sudo ip link set $interface multicast off
+    sudo ip link set $interface promisc on
+    sudo ip link set $interface up
+}
+
 sensor_setup_info(){
     # using whiptail to list all intefaces and make the user choose one to use as sniffer 
     interfaces=$(ip link show | grep -oP '\d+: \K.*' | cut -d ':' -f1)
