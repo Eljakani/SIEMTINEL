@@ -27,7 +27,7 @@ install_suricata() {
     sudo systemctl enable suricata
     sudo systemctl stop suricata
     # community-id: true in /etc/suricata/suricata.yaml
-    sudo sed -i 's/# community-id: true/community-id: true/g' /etc/suricata/suricata.yaml
+    sudo sed -i 's/# community-id: false/community-id: true/g' /etc/suricata/suricata.yaml
     # find the line pcap: and under it, set the value of the variable interface to the device name for your system
     sudo sed -i 's/# pcap:/pcap:/g' /etc/suricata/suricata.yaml
     #replace with the interface variable chosen by the user in the sensor_setup_info() function
