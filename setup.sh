@@ -41,6 +41,21 @@ install_suricata() {
     sudo suricata -T -c /etc/suricata/suricata.yaml -v
     sudo systemctl start suricata
 }
+sensor_setup_info(){
+    # using whiptail to list all intefaces and make the user choose one to use as sniffer 
+    interfaces=$(ip link show | grep -oP '\d+: \K.*' | cut -d ':' -f1)
+    interface=$(whiptail --title "Choose an interface" --menu "Choose an interface to use as sniffer" 15 60 4 $interfaces 3>&1 1>&2 2>&3)
+    echo "Interface chosen: $interface"
+    # ask for the IP address of the controller
+    CONTROLLER_IP=$(whiptail --inputbox "Enter the IP address of the controller" 8 78 --title "Controller IP" 3>&1 1>&2 2>&3)
+    echo "Controller IP: $CONTROLLER_IP"
+    # ask for the username of the controller and the password
+    CONTROLLER_USERNAME=$(whiptail --inputbox "Enter the username of the controller" 8 78 --title "Controller Username" 3>&1 1>&2 2>&3)
+    echo "Controller Username: $CONTROLLER_USERNAME"
+    CONTROLLER_PASSWORD=$(whiptail --passwordbox "Enter the password of the controller" 8 78 --title "Controller Password" 3>&1 1>&2 2>&3)
+    # password as ****
+    echo "Controller Password: ****"
+}
 
 suricata_network_setup(){
     # interface configuration
@@ -119,12 +134,6 @@ install_latest_filebeat() {
 }
 
 interactive_setup_filebeat() {
-    # ask for the ip address of the controller
-    read -p "Enter the IP address of the controller: " CONTROLLER_IP
-    # ask for the username of the controller and the password
-    read -p "Enter the username of the controller: " CONTROLLER_USERNAME
-    read -p "Enter the password of the controller: " CONTROLLER_PASSWORD
-    # replace CONTROLLER_IP in filebeat/filebeat.yml with the actual IP address
     sudo cp filebeat/filebeat.yml /etc/filebeat/filebeat.yml
 
     sudo sed -i "s/CONTROLLER_IP/$CONTROLLER_IP/g" /etc/filebeat/filebeat.yml
@@ -152,27 +161,25 @@ start_project() {
 }
 
 main() {
-    choice=""
-    while [[ "$choice" != "1" && "$choice" != "2" ]]; do
-        echo "[+] Is this machine a controller or a sensor?"
-        echo "1. Controller"
-        echo "2. Sensor"
-        read -p "Enter your choice: " choice
+    choice=$(whiptail --title "Machine Type" --menu "Is this machine a controller or a sensor?" 15 60 2 \
+        "1" "Controller" \
+        "2" "Sensor" \
+        3>&1 1>&2 2>&3)
         case $choice in
             1)
                 install_docker
                 start_project
                 ;;
             2)
-                install_suricata
-                install_latest_filebeat
-                interactive_setup_filebeat
+                sensor_setup_info
+                #install_suricata
+                #install_latest_filebeat
+                #interactive_setup_filebeat
                 ;;
             *)
                 echo "Invalid choice"
                 ;;
         esac
-    done
 }
 
 main
