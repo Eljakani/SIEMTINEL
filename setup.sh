@@ -50,12 +50,33 @@ suricata_network_setup(){
     sudo ip link set $interface promisc on
     sudo ip link set $interface up
 }
+is_valid_interface() {
+    local interface="$1"
+    ip link show "$interface" >/dev/null 2>&1
+}
 
 sensor_setup_info(){
     # using whiptail to list all intefaces and make the user choose one to use as sniffer 
-    interfaces=$(ip link show | grep -oP '\d+: \K.*' | cut -d ':' -f1)
-    interface=$(whiptail --title "Choose an interface" --menu "Choose an interface to use as sniffer" 15 60 4 $interfaces 3>&1 1>&2 2>&3)
-    echo "Interface chosen: $interface"
+    interfaces=$(ip link show | awk -F': ' '/state UP/ {print $2}')
+    # choose an interface to use as sniffer
+    echo "Available network interfaces:"
+    select interface in $interfaces; do
+        if is_valid_interface "$interface"; then
+            echo "Interface chosen: $interface"
+            break
+        else
+            echo "Invalid interface. Please try again."
+        fi
+    done
+
+    # If a valid interface is chosen, proceed with the script
+    if [ -n "$interface" ]; then
+        # Your script logic here
+        echo "Continuing with interface: $interface"
+    else
+        echo "No valid interface selected. Exiting."
+        exit 1
+    fi
     # ask for the IP address of the controller
     CONTROLLER_IP=$(whiptail --inputbox "Enter the IP address of the controller" 8 78 --title "Controller IP" 3>&1 1>&2 2>&3)
     echo "Controller IP: $CONTROLLER_IP"
