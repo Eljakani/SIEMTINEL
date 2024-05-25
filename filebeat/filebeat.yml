@@ -65,6 +65,10 @@ filebeat.config.modules:
 
   # Period on which files under path should be checked for changes
   #reload.period: 10s
+filebeat.modules:
+- module: suricata
+  eve:
+    enabled: true
 
 # ======================= Elasticsearch template setting =======================
 
