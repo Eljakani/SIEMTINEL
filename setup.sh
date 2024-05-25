@@ -30,7 +30,7 @@ install_suricata() {
     sudo sed -i 's/# community-id: true/community-id: true/g' /etc/suricata/suricata.yaml
     # find the line pcap: and under it, set the value of the variable interface to the device name for your system
     sudo sed -i 's/# pcap:/pcap:/g' /etc/suricata/suricata.yaml
-    sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yamls
+    sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yaml
     # #use-mmap: yes
     sudo sed -i 's/# use-mmap: yes/use-mmap: yes/g' /etc/suricata/suricata.yaml
     # enable capture-settings
