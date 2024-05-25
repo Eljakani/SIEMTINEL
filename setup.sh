@@ -30,7 +30,8 @@ install_suricata() {
     sudo sed -i 's/# community-id: true/community-id: true/g' /etc/suricata/suricata.yaml
     # find the line pcap: and under it, set the value of the variable interface to the device name for your system
     sudo sed -i 's/# pcap:/pcap:/g' /etc/suricata/suricata.yaml
-    sudo sed -i 's/#   interface: eth0/interface: eth0/g' /etc/suricata/suricata.yaml
+    #replace with the interface variable chosen by the user in the sensor_setup_info() function
+    sudo sed -i 's/#   interface: eth0/interface: '$interface'/g' /etc/suricata/suricata.yaml
     # #use-mmap: yes
     sudo sed -i 's/# use-mmap: yes/use-mmap: yes/g' /etc/suricata/suricata.yaml
     # enable capture-settings
@@ -41,6 +42,21 @@ install_suricata() {
     sudo systemctl start suricata
 }
 
+sensor_setup_info(){
+    # using whiptail to list all intefaces and make the user choose one to use as sniffer 
+    interfaces=$(ip link show | grep -oP '\d+: \K.*' | cut -d ':' -f1)
+    interface=$(whiptail --title "Choose an interface" --menu "Choose an interface to use as sniffer" 15 60 4 $interfaces 3>&1 1>&2 2>&3)
+    echo "Interface chosen: $interface"
+    # ask for the IP address of the controller
+    CONTROLLER_IP=$(whiptail --inputbox "Enter the IP address of the controller" 8 78 --title "Controller IP" 3>&1 1>&2 2>&3)
+    echo "Controller IP: $CONTROLLER_IP"
+    # ask for the username of the controller and the password
+    CONTROLLER_USERNAME=$(whiptail --inputbox "Enter the username of the controller" 8 78 --title "Controller Username" 3>&1 1>&2 2>&3)
+    echo "Controller Username: $CONTROLLER_USERNAME"
+    CONTROLLER_PASSWORD=$(whiptail --passwordbox "Enter the password of the controller" 8 78 --title "Controller Password" 3>&1 1>&2 2>&3)
+    # password as **
+    echo "Controller Password: **"
+}
 
 
 # Function to install Docker
