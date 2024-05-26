@@ -131,21 +131,21 @@ setup.kibana:
 # Configure what output to use when sending the data collected by the beat.
 
 # ---------------------------- Elasticsearch Output ----------------------------
-#output.elasticsearch:
+output.elasticsearch:
   # Array of hosts to connect to.
-  #hosts: ["CONTROLLER_IP:9200"]
+  hosts: ["CONTROLLER_IP:9200"]
 
   # Performance preset - one of "balanced", "throughput", "scale",
   # "latency", or "custom".
-  # preset: balanced
+  preset: balanced
 
   # Protocol - either `http` (default) or `https`.
   #protocol: "https"
 
   # Authentication credentials - either API key or username/password.
   #api_key: "id:api_key"
-  # username: "CONTROLLER_USERNAME"
-  # password: "CONTROLLER_PASSWORD"
+  username: "CONTROLLER_USERNAME"
+  password: "CONTROLLER_PASSWORD"
 
 # ------------------------------ Logstash Output -------------------------------
 output.logstash:
