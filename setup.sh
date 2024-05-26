@@ -206,7 +206,7 @@ main() {
                 suricata_network_setup
                 install_latest_filebeat
                 interactive_setup_filebeat
-                install_kafka
+                #install_kafka
                 ;;
             *)
                 echo "Invalid choice"

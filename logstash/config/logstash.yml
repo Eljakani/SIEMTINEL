@@ -2,20 +2,18 @@
 ## Default Logstash configuration from Logstash base image.
 ## https://github.com/elastic/logstash/blob/main/docker/data/logstash/config/logstash-full.yml
 #
-http.host: 0.0.0.0
+http.host: 128.110.217.133
 
 node.name: logstash
 
 input:
-  http_poller:
-    urls:
-      test1: "http://localhost:9650"
-    request_timeout: 60
-    schedule:
-      cron: "* * * * * UTC"
-    codec: "json"
-    metadata_target: "http_poller_metadata"
+  kafka:
+    bootstrap_servers: "128.110.217.157:9092"
+    topics: "filebeat"
+    group_id: "logstash"
+    codec: json
 
 output:
-  stdout:
-    codec: rubydebug
+  elasticsearch:
+    hosts: ["http://128.110.217.133:9200"]
+    index: "logstash-%{+YYYY.MM.dd}"

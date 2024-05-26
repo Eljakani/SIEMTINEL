@@ -25,11 +25,11 @@ filebeat.inputs:
   id: my-filestream-id
 
   # Change to true to enable this input configuration.
-  enabled: false
+  enabled: true
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-    - /var/log/*.log
+    - /var/log/suricata/eve.json
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
@@ -165,15 +165,10 @@ setup.template.settings:
 
 #------------------------Kafka--------------------------------
 output.kafka:
-  codec.format:
-    string: '%{[@timestamp]} %{[message]}'
   hosts: ["localhost:9092"]
-  topic: siemtinel
-  partition.round_robin:
-    reachable_only: false
-  required_acks: 1
-  compression: gzip
-  max_message_bytes: 1000000
+  topic: "filebeat"
+  codec.json:
+    pretty: false
 
 # ================================= Processors =================================
 processors:
