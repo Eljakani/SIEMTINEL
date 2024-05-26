@@ -168,6 +168,28 @@ start_project() {
     sudo docker compose up -d
 }
 
+
+install_kafka() {
+    # install java
+    sudo apt-get update
+    sudo apt-get install openjdk-8-jdk -y
+    #install zookeeper 
+    sudo apt-get install zookeeperd -y
+    # download and extract kafka
+    wget https://downloads.apache.org/kafka/3.7.0/kafka_2.12-3.7.0.tgz
+    tar -xzf kafka_2.13-3.7.0.tgz
+    cd kafka_2.13-3.7.0
+    # start zookeeper
+    bin/zookeeper-server-start.sh config/zookeeper.properties
+    # start kafka
+    bin/kafka-server-start.sh config/server.properties
+
+    # create a topic
+    bin/kafka-topics.sh --create --topic siemtinel --bootstrap-server localhost:9092
+    # list the topics
+   
+}
+
 main() {
     choice=$(whiptail --title "Machine Type" --menu "Is this machine a controller or a sensor?" 15 60 2 \
         "1" "Controller" \
