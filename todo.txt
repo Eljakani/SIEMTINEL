@@ -1,0 +1,7 @@
+code part :
+make both commandes "kafka and zookeeper" work in the background
+
+security mesures: 
+elastich search rules 
+suricata rules (possiblities : wazuh)
+possibiliy to add an Ai algo to detect logs in logstash
