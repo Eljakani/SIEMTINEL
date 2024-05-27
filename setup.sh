@@ -177,8 +177,17 @@ install_kafka() {
     sudo apt-get install zookeeperd -y
     # download and extract kafka
     wget https://downloads.apache.org/kafka/3.7.0/kafka_2.12-3.7.0.tgz
-    tar -xzf kafka_2.13-3.7.0.tgz
-    cd kafka_2.13-3.7.0
+    tar -xzf 'kafka_2.12-3.7.0.tgz'
+    
+    cd 'kafka_2.12-3.7.0'
+
+    
+    #in config/zookeeper.properties change the clientPort from 2181 to 2188
+    sudo sed -i 's/clientPort=2181/clientPort=2188/g' config/zookeeper.properties
+    
+    #in config/server.properties change the zookeeper.connect=localhost:2181 to zookeeper.connect=localhost:2188
+    sudo sed -i 's/zookeeper.connect=localhost:2181/zookeeper.connect=localhost:2188/g' config/server.properties
+
     # start zookeeper
     bin/zookeeper-server-start.sh config/zookeeper.properties
     # start kafka
@@ -206,6 +215,7 @@ main() {
                 suricata_network_setup
                 install_latest_filebeat
                 interactive_setup_filebeat
+                #todo change port of zookeeper and kafka
                 #install_kafka
                 ;;
             *)
