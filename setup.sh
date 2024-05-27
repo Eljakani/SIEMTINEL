@@ -216,7 +216,7 @@ main() {
                 install_latest_filebeat
                 interactive_setup_filebeat
                 #todo change port of zookeeper and kafka
-                #install_kafka
+                install_kafka
                 ;;
             *)
                 echo "Invalid choice"
