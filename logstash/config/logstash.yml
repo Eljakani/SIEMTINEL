@@ -1,19 +1,41 @@
----
-## Default Logstash configuration from Logstash base image.
-## https://github.com/elastic/logstash/blob/main/docker/data/logstash/config/logstash-full.yml
-#
-http.host: 128.110.217.133
+# Default Logstash configuration from Logstash base image.
+# https://github.com/elastic/logstash/blob/main/docker/data/logstash/config/logstash-full.yml
+#http.host: 128.110.217.133
+http.host: 0.0.0.0
 
 node.name: logstash
 
-input:
-  kafka:
-    bootstrap_servers: "128.110.217.157:9092"
-    topics: "filebeat"
-    group_id: "logstash"
-    codec: json
+# Set the path for Logstash logs
+path.logs: "/var/log/logstash"
 
-output:
-  elasticsearch:
-    hosts: ["http://128.110.217.133:9200"]
-    index: "logstash-%{+YYYY.MM.dd}"
+# Input configuration
+input {
+  kafka {
+    bootstrap_servers => "128.110.217.157:9092"
+    topics => ["filebeat"]
+    group_id => "logstash-group"
+    codec => "json"
+    auto_offset_reset => "latest"
+  }
+}
+
+# Filter configuration (optional)
+# filter {
+#   ...
+# }
+
+# Output configuration
+output {
+  elasticsearch {
+    hosts => ["http://128.110.217.133:9200"]
+    index => "logstash-%{+YYYY.MM.dd}"
+    user => "elastic"
+    password => "changeme"
+  }
+}
+
+# Set up monitoring and management
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: ["http://128.110.217.133:9200"]
+xpack.management.enabled: true
+xpack.management.elasticsearch.hosts: ["http://128.110.217.133:9200"]
