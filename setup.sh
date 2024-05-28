@@ -77,15 +77,6 @@ sensor_setup_info(){
         echo "No valid interface selected. Exiting."
         exit 1
     fi
-    # ask for the IP address of the controller
-    CONTROLLER_IP=$(whiptail --inputbox "Enter the IP address of the controller" 8 78 --title "Controller IP" 3>&1 1>&2 2>&3)
-    echo "Controller IP: $CONTROLLER_IP"
-    # ask for the username of the controller and the password
-    CONTROLLER_USERNAME=$(whiptail --inputbox "Enter the username of the controller" 8 78 --title "Controller Username" 3>&1 1>&2 2>&3)
-    echo "Controller Username: $CONTROLLER_USERNAME"
-    CONTROLLER_PASSWORD=$(whiptail --passwordbox "Enter the password of the controller" 8 78 --title "Controller Password" 3>&1 1>&2 2>&3)
-    # password as **
-    echo "Controller Password: **"
 }
 
 
@@ -143,21 +134,15 @@ install_latest_filebeat() {
 
 interactive_setup_filebeat() {
     sudo cp filebeat/filebeat.yml /etc/filebeat/filebeat.yml
-
-    sudo sed -i "s/CONTROLLER_IP/$CONTROLLER_IP/g" /etc/filebeat/filebeat.yml
-    # replace CONTROLLER_USERNAME in filebeat/filebeat.yml with the actual username
-    sudo sed -i "s/CONTROLLER_USERNAME/$CONTROLLER_USERNAME/g" /etc/filebeat/filebeat.yml
-    # replace CONTROLLER_PASSWORD in filebeat/filebeat.yml with the actual password
-    sudo sed -i "s/CONTROLLER_PASSWORD/$CONTROLLER_PASSWORD/g" /etc/filebeat/filebeat.yml
     # add /var/log/suricata/eve.json to the paths in filebeat/filebeat.yml
     sudo sed -i 's/# paths:/paths:/g' /etc/filebeat/filebeat.yml
     sudo sed -i 's/#   - \/var\/log\/*.log/   - \/var\/log\/suricata\/eve.json/g' /etc/filebeat/filebeat.yml
     # enable and start the filebeat service
     sudo systemctl enable filebeat
     # enable the suricata module
-    sudo filebeat modules enable suricata
+    #sudo filebeat modules enable suricata
     # setup the suricata module
-    sudo filebeat setup
+    #sudo filebeat setup
     # start the filebeat service
     sudo systemctl start filebeat
 
@@ -170,33 +155,18 @@ start_project() {
 
 
 install_kafka() {
-    # install java
-    sudo apt-get update
-    sudo apt-get install openjdk-8-jdk -y
-    #install zookeeper 
-    sudo apt-get install zookeeperd -y
-    # download and extract kafka
-    wget https://downloads.apache.org/kafka/3.7.0/kafka_2.12-3.7.0.tgz
-    tar -xzf 'kafka_2.12-3.7.0.tgz'
-    
-    cd 'kafka_2.12-3.7.0'
-
-    
-    #in config/zookeeper.properties change the clientPort from 2181 to 2188
-    sudo sed -i 's/clientPort=2181/clientPort=2188/g' config/zookeeper.properties
-    
-    #in config/server.properties change the zookeeper.connect=localhost:2181 to zookeeper.connect=localhost:2188
-    sudo sed -i 's/zookeeper.connect=localhost:2181/zookeeper.connect=localhost:2188/g' config/server.properties
-
-    # start zookeeper
-    bin/zookeeper-server-start.sh config/zookeeper.properties
-    # start kafka
-    bin/kafka-server-start.sh config/server.properties
-
-    # create a topic
-    bin/kafka-topics.sh --create --topic siemtinel --bootstrap-server localhost:9092
-    # list the topics
-   
+    # build the kafka image
+    docker build -t siemtinel-bitnami-kafka-server kafka/
+    # make the directory for the kafka data
+    mkdir -p /opt/siemtinel
+    # run the kafka container
+    docker run -d --name kafka-server -p 9092:9092 siemtinel-bitnami-kafka-server -v -v /opt/siemtinel:/bitnami/kafka
+    # create the topic siemtinel
+    docker exec -it kafka-server kafka-topics.sh --create --topic siemtinel --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+}
+show_linking_instructions() {
+    echo "To link the sensor to the controller, you need to run the following command on the sensor:"
+    echo "The IP address of the chosen interface is: $(ip -4 addr show $interface | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
 }
 
 main() {
@@ -215,7 +185,6 @@ main() {
                 suricata_network_setup
                 install_latest_filebeat
                 interactive_setup_filebeat
-                #todo change port of zookeeper and kafka
                 install_kafka
                 ;;
             *)
