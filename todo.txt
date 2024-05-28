@@ -5,3 +5,8 @@ security mesures:
 elastich search rules 
 suricata rules (possiblities : wazuh)
 possibiliy to add an Ai algo to detect logs in logstash
+
+optimizations :
+- copy the config data to /opt
+- dockerize kafka for easy setup
+- install logstash on system for easy rules update and sensors adding
