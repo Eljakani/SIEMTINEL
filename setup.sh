@@ -217,6 +217,7 @@ main() {
                 suricata_network_setup
                 install_latest_filebeat
                 interactive_setup_filebeat
+                install_docker
                 install_kafka
                 show_linking_instructions
                 ;;
