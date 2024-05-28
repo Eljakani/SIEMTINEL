@@ -192,6 +192,7 @@ install_logstash(){
             exit 1
             ;;
     esac
+}
 main() {
     choice=$(whiptail --title "Machine Type" --menu "Is this machine a controller or a sensor?" 15 60 2 \
         "1" "Controller" \
