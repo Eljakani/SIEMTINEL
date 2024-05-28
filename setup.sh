@@ -156,13 +156,13 @@ start_project() {
 
 install_kafka() {
     # build the kafka image
-    docker build -t siemtinel-bitnami-kafka-server kafka/
+    sudo docker build -t siemtinel-bitnami-kafka-server kafka/
     # make the directory for the kafka data
-    mkdir -p /opt/siemtinel
+    sudo mkdir -p /opt/siemtinel
     # run the kafka container
-    docker run -d --name kafka-server -p 9092:9092 siemtinel-bitnami-kafka-server -v -v /opt/siemtinel:/bitnami/kafka
+    sudo docker run -d --name kafka-server -p 9092:9092 siemtinel-bitnami-kafka-server -v -v /opt/siemtinel:/bitnami/kafka
     # create the topic siemtinel
-    docker exec -it kafka-server kafka-topics.sh --create --topic siemtinel --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+    sudo docker exec -it kafka-server kafka-topics.sh --create --topic siemtinel --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
 }
 show_linking_instructions() {
     echo "To link the sensor to the controller, you need to run the following command on the sensor:"
