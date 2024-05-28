@@ -77,6 +77,15 @@ sensor_setup_info(){
         echo "No valid interface selected. Exiting."
         exit 1
     fi
+    # ask for the IP address of the controller
+    CONTROLLER_IP=$(whiptail --inputbox "Enter the IP address of the controller" 8 78 --title "Controller IP" 3>&1 1>&2 2>&3)
+    echo "Controller IP: $CONTROLLER_IP"
+    # ask for the username of the controller and the password
+    CONTROLLER_USERNAME=$(whiptail --inputbox "Enter the username of the controller" 8 78 --title "Controller Username" 3>&1 1>&2 2>&3)
+    echo "Controller Username: $CONTROLLER_USERNAME"
+    CONTROLLER_PASSWORD=$(whiptail --passwordbox "Enter the password of the controller" 8 78 --title "Controller Password" 3>&1 1>&2 2>&3)
+    # password as **
+    echo "Controller Password: **"
 }
 
 
