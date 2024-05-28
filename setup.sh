@@ -192,6 +192,15 @@ install_logstash(){
             exit 1
             ;;
     esac
+
+
+configure_logstash(){
+    sudo cp logstash/logstash.yml /etc/logstash/logstash.yml
+    sudo cp logstash/pipeline.conf /etc/logstash/pipeline.conf
+    sudo systemctl enable logstash
+    sudo systemctl start logstash
+    
+}    
 main() {
     choice=$(whiptail --title "Machine Type" --menu "Is this machine a controller or a sensor?" 15 60 2 \
         "1" "Controller" \
