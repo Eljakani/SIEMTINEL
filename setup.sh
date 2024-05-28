@@ -199,7 +199,6 @@ configure_logstash(){
     sudo cp logstash/logstash.conf /etc/logstash/pipeline.conf
     sudo systemctl enable logstash
     sudo systemctl start logstash
-
 }
 main() {
     choice=$(whiptail --title "Machine Type" --menu "Is this machine a controller or a sensor?" 15 60 2 \
