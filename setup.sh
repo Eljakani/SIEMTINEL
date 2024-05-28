@@ -218,6 +218,7 @@ main() {
                 install_latest_filebeat
                 interactive_setup_filebeat
                 install_kafka
+                show_linking_instructions
                 ;;
             *)
                 echo "Invalid choice"
