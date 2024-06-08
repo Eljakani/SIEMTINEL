@@ -219,7 +219,7 @@ main() {
         1)
             install_docker
             start_project
-            install_logstash
+            create_logstash_config_alias
             ;;
         2)
             sensor_setup_info
