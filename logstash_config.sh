@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOGSTASH_CONF="./logstash/pipeline/logstash.conf"
+LOGSTASH_CONF="/etc/logstash.conf"
 
 # Function to display the current Kafka bootstrap servers
 list_servers() {
@@ -47,7 +47,7 @@ remove_server() {
 get_elasticsearch_ip() {
     # Replace 'elasticsearch_container_name' with the actual name of your Elasticsearch container
     local container_name="siemtinel-elasticsearch"
-    local ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container_name)
+    local ip=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container_name)
     echo $ip
 }
 
