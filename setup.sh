@@ -162,6 +162,16 @@ show_linking_instructions() {
     echo "The IP address of the chosen interface is: $(ip -4 addr show $interface | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
 }
 
+pre_setup() {
+    echo "[+] Setting up the environment..."
+    # get the public IP address of the machine
+    public_ip=$(curl -s ifconfig.me)
+    # set the public IP address in the place of <your_host_ip> in the ./kafka/docker-compose.yml file and the ./filebeat/filebeat.yml file
+    sudo sed -i "s/<your_host_ip>/$public_ip/g" kafka/docker-compose.yml
+    sudo sed -i "s/<your_host_ip>/$public_ip/g" filebeat/filebeat.yml
+    echo "[+] Environment setup completed."
+}
+
 install_logstash() {
     DISTRO=$(detect_distro)
     VERSION=$(grep ELASTIC_VERSION .env | cut -d '=' -f2)
@@ -216,6 +226,7 @@ main() {
             create_logstash_config_alias
             ;;
         2)
+            pre_setup
             sensor_setup_info
             install_suricata
             suricata_network_setup

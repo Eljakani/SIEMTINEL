@@ -165,11 +165,8 @@ setup.template.settings:
 
 #------------------------Kafka--------------------------------
 output.kafka:
-  hosts: ["localhost:9092"]
+  hosts: ["<your_host_ip>:9092"]
   topic: "siemtinel"
-  codec.json:
-    pretty: false
-
 # ================================= Processors =================================
 processors:
   - add_host_metadata:
