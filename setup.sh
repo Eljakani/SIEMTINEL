@@ -153,6 +153,7 @@ interactive_setup_filebeat() {
 start_project() {
     echo "[+] Starting Docker project..."
     sudo docker compose up setup >/dev/null 2>&1
+    sudo cp logstash/pipeline/logstash.conf /etc/logstash/pipeline/logstash.conf
     sudo docker compose up -d >/dev/null 2>&1
     echo "[+] Docker project started."
 }
