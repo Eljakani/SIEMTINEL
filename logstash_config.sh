@@ -11,8 +11,8 @@ list_servers() {
 # Function to add a new Kafka bootstrap server
 add_server() {
     read -p "Enter the new Kafka IP address: " new_ip
-    read -p "Enter the new Kafka port (default is 9093): " new_port
-    new_port=${new_port:-9093}
+    read -p "Enter the new Kafka port (default is 9092): " new_port
+    new_port=${new_port:-9092}
 
     if grep -q "$new_ip:$new_port" $LOGSTASH_CONF; then
         echo "Server $new_ip:$new_port already exists."
@@ -30,8 +30,8 @@ add_server() {
 # Function to remove a Kafka bootstrap server
 remove_server() {
     read -p "Enter the Kafka IP address to remove: " remove_ip
-    read -p "Enter the Kafka port to remove (default is 9093): " remove_port
-    remove_port=${remove_port:-9093}
+    read -p "Enter the Kafka port to remove (default is 9092): " remove_port
+    remove_port=${remove_port:-9092}
 
     if grep -q "$remove_ip:$remove_port" $LOGSTASH_CONF; then
         sed -i "s|$remove_ip:$remove_port,||" $LOGSTASH_CONF
