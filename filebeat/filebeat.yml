@@ -165,7 +165,7 @@ setup.template.settings:
 
 #------------------------Kafka--------------------------------
 output.kafka:
-  hosts: ["localhost:9092"]
+  hosts: ["localhost:9093"]
   topic: "filebeat"
   codec.json:
     pretty: false
