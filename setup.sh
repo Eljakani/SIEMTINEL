@@ -74,13 +74,6 @@ sensor_setup_info() {
         echo "No valid interface selected. Exiting."
         exit 1
     fi
-
-    CONTROLLER_IP=$(whiptail --inputbox "Enter the IP address of the controller" 8 78 --title "Controller IP" 3>&1 1>&2 2>&3)
-    echo "Controller IP: $CONTROLLER_IP"
-    CONTROLLER_USERNAME=$(whiptail --inputbox "Enter the username of the controller" 8 78 --title "Controller Username" 3>&1 1>&2 2>&3)
-    echo "Controller Username: $CONTROLLER_USERNAME"
-    CONTROLLER_PASSWORD=$(whiptail --passwordbox "Enter the password of the controller" 8 78 --title "Controller Password" 3>&1 1>&2 2>&3)
-    echo "Controller Password: **"
 }
 
 # Function to install Docker
