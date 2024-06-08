@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOGSTASH_CONF="/etc/logstash.conf"
+LOGSTASH_CONF="/etc/logstash/pipeline/logstash.conf"
 
 # Function to display the current Kafka bootstrap servers
 list_servers() {

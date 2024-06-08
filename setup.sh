@@ -199,6 +199,16 @@ configure_logstash() {
     sudo systemctl start logstash >/dev/null 2>&1
     echo "[+] Logstash configuration completed."
 }
+create_logstash_config_alias() {
+    echo "[+] Creating Logstash config alias..."
+    # copy the logstash_config.sh file to the /usr/local/bin directory
+    sudo cp logstash_config.sh /usr/local/bin/logstash_config
+    sudo chmod +x /usr/local/bin/logstash_config
+    # create a simple alias for the logstash_config.sh script
+    echo "alias siemcc='/usr/local/bin/logstash_config'" >> ~/.bashrc
+    source ~/.bashrc
+    echo "[+] Logstash config alias created. You can now use the 'siemcc' command."
+}
 
 main() {
     choice=$(whiptail --title "Machine Type" --menu "Is this machine a controller or a sensor?" 15 60 2 \
