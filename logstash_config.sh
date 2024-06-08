@@ -43,34 +43,13 @@ remove_server() {
     fi
 }
 
-# Function to get the IP address of the Elasticsearch container
-get_elasticsearch_ip() {
-    # Replace 'elasticsearch_container_name' with the actual name of your Elasticsearch container
-    local container_name="siemtinel-elasticsearch"
-    local ip=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container_name)
-    echo $ip
-}
-
-# Function to update the Elasticsearch IP address in logstash.conf
-update_elasticsearch_ip() {
-    local es_ip=$(get_elasticsearch_ip)
-    if [ -z "$es_ip" ]; then
-        echo "Elasticsearch container not found. Please ensure it is running."
-        exit 1
-    fi
-
-    echo "[+] Updating Elasticsearch IP address to $es_ip..."
-    sed -i "s|hosts => \"http://[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}:[0-9]\{1,5\}\"|hosts => \"http://$es_ip:9200\"|g" $LOGSTASH_CONF
-    echo "[+] Elasticsearch IP address updated to $es_ip."
-}
 
 # Main menu
 while true; do
     echo "1. List Kafka bootstrap servers"
     echo "2. Add a new Kafka bootstrap server"
     echo "3. Remove a Kafka bootstrap server"
-    echo "4. Update Elasticsearch IP address"
-    echo "5. Exit"
+    echo "4. Exit"
     read -p "Choose an option: " choice
 
     case $choice in
@@ -84,9 +63,6 @@ while true; do
             remove_server
             ;;
         4)
-            update_elasticsearch_ip
-            ;;
-        5)
             break
             ;;
         *)
