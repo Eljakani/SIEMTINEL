@@ -172,10 +172,10 @@ interactive_setup_filebeat() {
     sudo sed -i "s/CONTROLLER_PASSWORD/$CONTROLLER_PASSWORD/g" /etc/filebeat/filebeat.yml
     sudo sed -i 's/# paths:/paths:/g' /etc/filebeat/filebeat.yml
     sudo sed -i 's/#   - \/var\/log\/*.log/   - \/var\/log\/suricata\/eve.json/g' /etc/filebeat/filebeat.yml
-    sudo systemctl enable filebeat >/dev/null 2>&1
-    sudo filebeat modules enable suricata >/dev/null 2>&1
-    sudo filebeat setup >/dev/null 2>&1
-    sudo systemctl start filebeat >/dev/null 2>&1
+    sudo systemctl enable filebeat >/dev/null
+    sudo filebeat modules enable suricata 
+    sudo filebeat setup 
+    sudo systemctl start filebeat 
 }
 
 start_project() {
